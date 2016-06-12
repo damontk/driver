@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="$!{resources}/resources/css/driver/chat.css">
+</head>
+##<script>
+##    $(function () {
+##        app.connect();
+##    })
+##</script>
+<body>
+<div class="content" style="height: 600px;">
+    <div class="chatContent">
+        <div class="chatRecord">
+        </div>
+        <div class="chatInput">
+            <input class="input" type="text" value="" placeholder="请输入内容">
+            <input class="chatSend" type="button" onclick="sendMessage()" value="发送">
+        </div>
+    </div>
+    <div class="chatUsers">
+
+    </div>
+
+</div>
+</body>
+<script type="text/javascript" src="$!{resources}/resources/js/jquery.min.js"></script>
+<script type="text/javascript" src="$!{resources}/resources/js/sockjs-0.3.4.js"></script>
+<script type="text/javascript" src="$!{resources}/resources/js/stomp.js"></script>
+<script type="text/javascript" src="$!{resources}/resources/js/chat/chat.js?id=1"></script>
+</html>

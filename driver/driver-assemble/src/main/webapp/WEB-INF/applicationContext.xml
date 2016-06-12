@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+	      http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		  http://www.springframework.org/schema/beans
+		  http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		  http://www.springframework.org/schema/context
+		  http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/aop
+		  http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+
+    <context:annotation-config/>
+
+    <context:component-scan base-package="com.zhongc.driver.web.controller">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+    <!--<context:component-scan base-package="com.zhongc.driver.socket"/>-->
+    <!--驱动开启-->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+            <bean id="fastJsonHttpMessageConverter"
+                  class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+                <!--<property name="serializerFeature">-->
+                <!--这个地方加上这个功能，能自己配置一些东西，比如时间的格式化，null输出""等等-->
+                <!--</property>-->
+            </bean>
+        </mvc:message-converters>
+
+    </mvc:annotation-driven>
+
+    <!-- velocity 配置 -->
+    <bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="cache" value="true"/>
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="requestContextAttribute" value="rc"/>
+        <property name="exposeSessionAttributes" value="false"/>
+        <property name="order" value="1"/>
+        <property name="contentType" value="text/html; charset=UTF-8"/>
+        <property name="viewClass"
+                  value="org.springframework.web.servlet.view.velocity.VelocityView"/>
+        <property name="allowSessionOverride" value="true"/>
+        <property name="toolboxConfigLocation" value="/WEB-INF/tools/velocity-toolbox.xml"/>
+    </bean>
+    <mvc:resources mapping="/resources/**" location="/resources/" cache-period="31556926"/>
+
+    <bean
+            class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath" value="/WEB-INF/views/"/>
+        <property name="velocityProperties">
+            <props>
+                <prop key="input.encoding">UTF-8</prop>
+                <prop key="output.encoding">UTF-8</prop>
+                <prop key="parser.pool.size">100</prop>
+                <prop key="velocimacro.library.autoreload">true</prop>
+            </props>
+        </property>
+    </bean>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <bean class="com.zhongc.driver.web.interceptors.IndexInterceptors">
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--异常控制处理器-->
+    <bean id="exceptionHandlerExceptionResolver"
+          class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver"/>
+    <bean id="commonExceptionResolver" class="com.zhongc.driver.web.exception.CommonExceptionResolver"/>
+
+    <!-- 开启Apache Shiro注解 否则使用SHIRO的注解后 @Autowired注解将会失效 -->
+    <aop:config proxy-target-class="true"></aop:config>
+    <!--<bean-->
+            <!--class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">-->
+        <!--<property name="securityManager" ref="securityManager"/>-->
+    <!--</bean>-->
+
+    <import resource="classpath:/spring/dubbo_driver.xml"/>
+
+    <!-- webSocket 配置 -->
+    <!--<bean id="webSocketMsgHandler" class="com.zhongc.driver.socket.handler.WebSocketMsgHandler"/>-->
+    <!--<websocket:handlers>-->
+    <!--<websocket:mapping path="/websocket" handler="webSocketMsgHandler"/>-->
+    <!--<websocket:handshake-interceptors>-->
+    <!--<bean class="com.zhongc.driver.socket.support.HandshakeInterceptor"/>-->
+    <!--</websocket:handshake-interceptors>-->
+    <!--</websocket:handlers>-->
+</beans>

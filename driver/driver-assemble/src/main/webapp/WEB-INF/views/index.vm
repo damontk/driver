@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>聊天室管理</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+##    <link rel="stylesheet" type="text/css" href="/dhtmlx/dhtmlxEditor/codebase/skins/dhtmlxeditor_dhx_skyblue.css">
+##    <script src="/common/js/lib-base.js" type="text/javascript"></script>
+##    <script src="/dhtmlx/dhtmlxEditor/codebase/dhtmlxeditor.js" type="text/javascript"></script>
+    <!-- <script src="/dhtmlx/dhtmlxEditor/codebase/ext/dhtmlxeditor_ext.js" type="text/javascript"></script> -->
+    <!-- web chat 引入相关脚本 -->
+    <script src="${resources}/resources/js/sockjs-0.3.4.js" type="text/javascript"></script>
+    <script src="${resources}/resources/js/stomp.js" type="text/javascript"></script>
+    <!----------------end------------------->
+    <script>
+        var chatLayout;
+        var roomid = "${roomid}";
+        var roomName = null;
+        var friendTree = null;
+        var userid = null;
+        var username = null;
+        var deptSortName = null;
+        var editor = null;
+        $(function () {
+            commonForm.initForm();
+            chatLayout = new dhtmlXLayoutObject(document.body, "3J");
+            ajaxPost("/chatroom/findById", {"id": roomid}, function (data, status) {
+                chatLayout.cells("a").setText("<img src='/images/Pub/User.gif' width='16px' height='16px' align='absmiddle' style='margin-right:5px'>" + data.roomName);
+                roomName = data.roomName;
+                $("#roomRemark").html(data.remark);
+            });
+            chatLayout.cells("a").hideHeader();
+            chatLayout.cells("a").attachObject("chatMsg");
+            chatLayout.cells("c").setHeight(150);
+            chatLayout.cells("c").hideHeader();
+            chatLayout.setAutoSize("a;c", "a;b");
+            chatLayout.cells("b").setWidth(180);
+            var friendLayout = chatLayout.cells("b").attachLayout("2E");
+            friendTree = friendLayout.cells("b").attachTree();
+            friendLayout.cells("a").setText("<img src='/images/Pub/User.gif' width='16px' height='16px' align='absmiddle' style='margin-right:5px'>群公告");
+            friendLayout.cells("a").attachObject("roomRemark");
+            friendLayout.cells("a").setHeight(100);
+            friendLayout.cells("b").setText("<img src='/images/Pub/User.gif' width='16px' height='16px' align='absmiddle' style='margin-right:5px'>好友列表");
+            friendLayout.setAutoSize("a;b", "b");
+            //加载好友列表树
+            ajaxPost("/auth/getCurUser", null, function (data, status) {
+                userid = data.id;
+                username = data.name;
+                deptSortName = data.deptSortName;
+            })
+            loadChatFriend();
+            //加载聊天
+            var talkLayout = chatLayout.cells("c").attachLayout("2E");
+            talkLayout.cells("a").hideHeader();
+            talkLayout.cells("b").hideHeader();
+            talkLayout.cells("b").setHeight(29);
+            //dhtmlx.image_path="/dhtmlx/dhtmlxEditor/codebase/imgs/";
+            editor = talkLayout.cells("a").attachEditor();
+            var toolbar = talkLayout.cells("b").attachToolbar();
+            toolbar.setIconsPath("/images/Pub/");
+            var tbindex = 0;
+            toolbar.addSeparator("sep1", tbindex++);
+            toolbar.addSpacer("sep1");
+            toolbar.addButton("closeChat", tbindex++, "关闭", "delete.png", "delte.png");
+            toolbar.addSeparator("sep2", tbindex++);
+            toolbar.addButton("videoChat", tbindex++, "视频", "FrameReLogin.gif", "FrameReLogin.gif");
+            toolbar.addSeparator("sep3", tbindex++);
+            toolbar.addButton("sendMessage", tbindex++, "发送", "redo.gif", "redo.gif");
+
+            toolbar.attachEvent("onclick", function (tid) {
+                switch (tid) {
+                    case "sendMessage":
+                        if (editor.getContent() == "")
+                            return;
+                        sendMessage("0");
+                        editor.setContent("");
+                        break;
+                    case "closeChat":
+                        sendMessage("1", "离开");
+                        parent.dhxWins.window("chatWin").close();
+                        break;
+                    case "videoChat":
+                        top.openWindow("/video/openVideoChat?roomid=" + roomid, "videoWin", "聊天室【" + roomName + "】", 650, 550, false, false, true);
+                        break;
+                    default:
+                        break;
+                }
+            })
+
+
+        });
+
+        function loadChatFriend() {
+            friendTree.setSkin('dhx_skyblue');
+            friendTree.setImagePath("/dhtmlx/dhtmlxTree/codebase/imgs/csh_dhx_skyblue/");
+            ajaxPost("/chatroom/getChatFriends", {"roomid": roomid}, function (data, status) {
+                friendTree.deleteChildItems(friendTree.rootId);
+                $.each(data, function (index, item) {
+                    var id = item.user.id;
+                    var deptName = item.user.corg.shortName;
+                    var userName = item.user.name;
+                    var isCreator = item.isCreator;
+                    friendTree.insertNewItem(friendTree.rootId, id, deptName + "--" + userName + (isCreator == "1" ? "（群主）" : ""), 0, 0, 0, 0, "");
+                    if (userid == id)
+                        friendTree.setItemColor(id, "red", "");
+                })
+            })
+        }
+
+        //---------------------------------------聊天室关键代码（websocket）---------------------------------------
+        var stompClient = null;
+        content = null;
+        $(function () {
+            connect();
+        })
+        //connect the server
+        function connect() {
+            var socket = new SockJS("/webchat");
+            stompClient = Stomp.over(socket);
+            stompClient.connect('', '', function (frame) {
+                console.log('Connected: ' + frame);
+                //用户聊天订阅
+                //alert("hello: "+frame);
+                stompClient.subscribe("/userChat/chat" + roomid, function (chat) {
+                    showChat(JSON.parse(chat.body));
+                });
+
+                //初始化
+                stompClient.subscribe("/app/initChat/" + roomid, function (initData) {
+                    //alert("初始化聊天室");
+                    console.log(initData);
+                    content = JSON.parse(initData.body);
+                    //content=body.document.content;
+                    //alert(content+":"+content.document.content);
+                    content.forEach(function (item) {
+                        showChat(item);
+                    });
+                    sendMessage("1", "进入");
+                });
+            }, function () {
+                connect();
+            });
+        }
+
+        //显示聊天信息
+        function showChat(message) {
+            var htmlMsg = decodeURIComponent(message.chatContent);
+            var image = "<img src='/images/Pub/User.gif' width='16px' height='16px' align='absmiddle'/>";
+            var userMsg = decodeURIComponent(message.deptName)
+                    + "--" + decodeURIComponent(message.userName) + "   " + decodeURIComponent(message.curTime) + "</font>";
+            htmlMsg = userMsg + "<br/>    " + htmlMsg;
+            if (htmlMsg != "") {
+                if ($("#chatMsg").html() != "") {
+                    if (message.isSysMsg == "1")
+                        $("#chatMsg").append("<br/><div style='text-align:center'><font color='gray'>" + htmlMsg + "</div>");
+                    else
+                        $("#chatMsg").append("<br/>" + image + "<font color='blue'>" + htmlMsg);
+                }
+                else {
+                    if (message.isSysMsg == "1")
+                        $("#chatMsg").append("<div style='text-align:center'><font color='gray'>" + htmlMsg + "</div>");
+                    else
+                        $("#chatMsg").append(image + "<font color='blue'>" + htmlMsg);
+                }
+
+                $("#chatMsg")[0].scrollTop = $("#chatMsg")[0].scrollHeight;
+            }
+        }
+
+        function sendMessage(isSysMsg, textMsg) {
+            var chatCont = editor.getContent();
+            if (isSysMsg == "1") {
+                chatCont = "<font color='gray'>" + textMsg + "聊天室</font>";
+            }
+            stompClient.send("/app/userChat", {}, JSON.stringify({
+                'roomid': encodeURIComponent(roomid),
+                'userName': encodeURIComponent(username),
+                'deptName': encodeURIComponent(deptSortName),
+                'chatContent': encodeURIComponent(chatCont),
+                'isSysMsg': encodeURIComponent(isSysMsg)
+            }))
+        }
+        //---------------------------------------------------------------------------------------------------------------
+
+    </script>
+</head>
+<body style="width:100%;height:100%;margin:0px;overflow:hidden;">
+<div id="roomRemark">-- </div>
+<div style="position:relative;width:99%;height:100%;overflow:auto;display:none;margin-left:5px;" id="chatMsg"></div>
+</body>
+</html>

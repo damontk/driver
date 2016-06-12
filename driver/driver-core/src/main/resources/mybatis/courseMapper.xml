@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongc.driver.core.dao.CourseDao" >
+  <resultMap id="BaseResultMap" type="com.zhongc.driver.domain.Course" >
+    <id column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="driver_type" property="driverType" jdbcType="INTEGER" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="dr" property="dr" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    course_id, driver_type, course_name, dr
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" resultType="com.zhongc.driver.domain.Coach" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from t_course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_course set dr = 0  where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insert" parameterType="com.zhongc.driver.domain.Course" >
+    insert into t_course (course_id, driver_type, course_name,
+      dr)
+    values (#{courseId,jdbcType=INTEGER}, #{driverType,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR},
+      #{dr,jdbcType=BIT})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongc.driver.domain.Course" >
+    update t_course
+    <set >
+      <if test="driverType != null" >
+        driver_type = #{driverType,jdbcType=INTEGER},
+      </if>
+      <if test="courseName != null" >
+        course_name = #{courseName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongc.driver.domain.Course" >
+    update t_course
+    set driver_type = #{driverType,jdbcType=INTEGER},
+      course_name = #{courseName,jdbcType=VARCHAR},
+      dr = #{dr,jdbcType=BIT}
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+</mapper>

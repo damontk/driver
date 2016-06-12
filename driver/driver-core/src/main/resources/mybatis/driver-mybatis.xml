@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<mappers>
+		<!--<mapper resource="mybatis/coachMapper.xml"/>-->
+		<mapper resource="mybatis/courseMapper.xml"/>
+		<mapper resource="mybatis/leaveMsgMapper.xml"/>
+		<mapper resource="mybatis/orderMapper.xml"/>
+		<mapper resource="mybatis/orderTimeMapper.xml"/>
+		<mapper resource="mybatis/userMapper.xml"/>
+	</mappers>
+</configuration>

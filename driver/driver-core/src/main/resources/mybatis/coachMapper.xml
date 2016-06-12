@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongc.driver.core.dao.CoachDao" >
+  <resultMap id="BaseResultMap" type="com.zhongc.driver.domain.Coach" >
+    <id column="coach_id" property="coachId" jdbcType="INTEGER" />
+    <result column="coach_name" property="coachName" jdbcType="VARCHAR" />
+    <result column="coach_sex" property="coachSex" jdbcType="BIT" />
+    <result column="driver_age" property="driverAge" jdbcType="INTEGER" />
+    <result column="driver_type" property="driverType" jdbcType="VARCHAR" />
+    <result column="teach_type" property="teachType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    coach_id, coach_name, coach_sex, driver_age, driver_type, teach_type
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from t_coach
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectCoachs" resultMap="BaseResultMap" resultType="java.util.List">
+    select <include refid="Base_Column_List" />
+    from t_coach
+    <where>
+
+      <if test="coachName != null" >
+        coach_name = #{coachName,jdbcType=VARCHAR},
+      </if>
+
+      <if test="driverAge != null" >
+        driver_age = #{driverAge,jdbcType=INTEGER},
+      </if>
+      <if test="driverType != null" >
+        driver_type = #{driverType,jdbcType=VARCHAR},
+      </if>
+      <if test="teachType != null" >
+        teach_type = #{teachType,jdbcType=VARCHAR},
+      </if>
+
+    </where>
+    order by coach_id desc limit #{start,jdbcType=INTEGER},#{end,jdbcType=INGEGER}
+  </select>
+
+  <select id="selectCoachsCount" resultType="java.lang.Integer">
+    select count(*)
+    from t_coach
+    <where>
+
+      <if test="coachName != null" >
+        coach_name = #{coachName,jdbcType=VARCHAR},
+      </if>
+
+      <if test="driverAge != null" >
+        driver_age = #{driverAge,jdbcType=INTEGER},
+      </if>
+      <if test="driverType != null" >
+        driver_type = #{driverType,jdbcType=VARCHAR},
+      </if>
+      <if test="teachType != null" >
+        teach_type = #{teachType,jdbcType=VARCHAR},
+      </if>
+
+    </where>
+    order by coach_id desc
+  </select>
+
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    UPDATE  t_coach SET dr = #{dr,jdbcType=BIT}  where coach_id = #{coachId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insert" parameterType="com.zhongc.driver.domain.Coach" >
+    insert into t_coach (coach_id, coach_name, coach_sex,
+      driver_age, driver_type, teach_type
+      )
+    values (#{coachId,jdbcType=INTEGER}, #{coachName,jdbcType=VARCHAR}, #{coachSex,jdbcType=BIT},
+      #{driverAge,jdbcType=INTEGER}, #{driverType,jdbcType=VARCHAR}, #{teachType,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongc.driver.domain.Coach" >
+    update t_coach
+    <set >
+      <if test="coachName != null" >
+        coach_name = #{coachName,jdbcType=VARCHAR},
+      </if>
+      <if test="coachSex != null" >
+        coach_sex = #{coachSex,jdbcType=BIT},
+      </if>
+      <if test="driverAge != null" >
+        driver_age = #{driverAge,jdbcType=INTEGER},
+      </if>
+      <if test="driverType != null" >
+        driver_type = #{driverType,jdbcType=VARCHAR},
+      </if>
+      <if test="teachType != null" >
+        teach_type = #{teachType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongc.driver.domain.Coach" >
+    update t_coach
+    set coach_name = #{coachName,jdbcType=VARCHAR},
+      coach_sex = #{coachSex,jdbcType=BIT},
+      driver_age = #{driverAge,jdbcType=INTEGER},
+      driver_type = #{driverType,jdbcType=VARCHAR},
+      teach_type = #{teachType,jdbcType=VARCHAR}
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/driver-assemble/driver-assemble.iml" filepath="$PROJECT_DIR$/driver-assemble/driver-assemble.iml" />
+      <module fileurl="file://$PROJECT_DIR$/driver-core/driver-core.iml" filepath="$PROJECT_DIR$/driver-core/driver-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/driver-parent.iml" filepath="$PROJECT_DIR$/driver-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/driver-service/driver-service.iml" filepath="$PROJECT_DIR$/driver-service/driver-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/driver-test/driver-test.iml" filepath="$PROJECT_DIR$/driver-test/driver-test.iml" />
+    </modules>
+  </component>
+</project>

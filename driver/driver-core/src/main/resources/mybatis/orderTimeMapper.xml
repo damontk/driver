@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongc.driver.core.dao.OrderTimeDao">
+    <resultMap id="BaseResultMap" type="com.zhongc.driver.domain.OrderTime">
+        <id column="time_id" property="timeId" jdbcType="INTEGER"/>
+        <result column="begin_time" property="beginTime" jdbcType="VARCHAR"/>
+        <result column="end_time" property="endTime" jdbcType="VARCHAR"/>
+        <result column="coach_id" property="coachId" jdbcType="INTEGER"/>
+        <result column="num" property="num" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    time_id, begin_time, end_time, coach_id,num
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order_time
+        where time_id = #{timeId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectOrderTime" resultMap="BaseResultMap" resultType="java.util.List">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order_time
+        <where>
+            <if test="coachId != null">
+                coach_id = #{coachId,jdbcType=INTEGER}
+            </if>
+        </where>
+        ORDER BY coach_id DESC limit #{start,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectOrderTimeCount" resultType="java.lang.Integer">
+        select COUNT(*)
+        from t_order_time
+        <where>
+            <if test="coachId != null">
+                coach_id = #{coachId,jdbcType=INTEGER}
+            </if>
+        </where>
+        ORDER BY coach_id DESC limit #{start,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_order_time
+    where time_id = #{timeId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.zhongc.driver.domain.OrderTime">
+    insert into t_order_time (time_id, begin_time, end_time,
+      coach_id,num)
+    values (#{timeId,jdbcType=INTEGER}, #{beginTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR},
+      #{coachId,jdbcType=INTEGER},#{num,jdbcType=INTEGER})
+  </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.zhongc.driver.domain.OrderTime">
+        update t_order_time
+        <set>
+            <if test="beginTime != null">
+                begin_time = #{beginTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="coachId != null">
+                coach_id = #{coachId,jdbcType=INTEGER},
+            </if>
+            <if test="num != null">
+                num = #{num,jdbcType=INTEGER},
+            </if>
+        </set>
+        where time_id = #{timeId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.zhongc.driver.domain.OrderTime">
+    update t_order_time
+    set begin_time = #{beginTime,jdbcType=VARCHAR},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      coach_id = #{coachId,jdbcType=INTEGER}
+      num = #{num,jdbcType=INTEGER}
+    where time_id = #{timeId,jdbcType=INTEGER}
+  </update>
+</mapper>

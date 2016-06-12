@@ -1,0 +1,87 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Hello Amaze UI</title>
+
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+
+    <!-- No Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="icon" type="image/png" href="../assets/image/favicon.png">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="../assets/image/app-icon72x72@2x.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
+    <meta name="msapplication-TileColor" content="#0e90d2">
+
+    <link rel="stylesheet" href="../assets/css/amazeui.css">
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <link rel="stylesheet" href="../assets/css/amazeui.flat.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
+</head>
+<body>
+<div class="zc-tm">
+    <div class="am-cf" id="userbg">
+        <button class="am-btn am-btn-success am-icon-home am-fl"></button>
+        <button class="am-btn am-btn-success am-icon-user am-fr"></button>
+    </div>
+    <div class="" style="background-color: #FFFFFF;font-size: 15px">
+        <strong >欢迎你，$!{user.userName}</strong>
+    </div>
+    <div class="am-panel am-panel-title am-g">
+        <div class="am-panel-hd"><strong>你能预约的时间为${date}天之内</strong></div>
+        <div class="am-panel-bd">
+            <i class="am-icon-calendar"></i><select data-am-selected="{btnWidth: '34%', btnSize: 'sm',maxHeight: '100'}"
+                                                    id="timechoose"
+                                                    onchange="selectTime();">
+            <option value="null">--选择预约日期--</option>
+            <option value="a">$!{date}</option>
+            <option value="b">$!{date}</option>
+        </select>
+        </div>
+        <table class="am-table am-table-centered am-table-striped am-table-hover">
+            <tr>
+                <td>预约时段</td>
+                <td>教练名称</td>
+            </tr>
+            <tr>
+                <td>---</td>
+                <td>---</td>
+                <td>
+                    <button class="am-btn am-btn-default am-btn-xs">预约</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<!--<div class="am-form am-form-field">-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="../assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="../assets/js/amazeui.ie8polyfill.min.js"></script>
+
+<![endif]-->
+<script src="../assets/js/amazeui.min.js"></script>
+<script src="../assets/js/order/order.js"></script>
+</body>
+</html>

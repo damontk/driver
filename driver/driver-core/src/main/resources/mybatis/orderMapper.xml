@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongc.driver.core.dao.OrderDao" >
+  <resultMap id="BaseResultMap" type="com.zhongc.driver.domain.Order" >
+    <id column="order_id" property="orderId" jdbcType="VARCHAR" />
+    <result column="user_id" property="phone" jdbcType="VARCHAR" />
+    <result column="time_id" property="timeId" jdbcType="INTEGER" />
+    <result column="coach_id" property="coachId" jdbcType="INTEGER" />
+    <result column="order_time" property="orderTime" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_id, user_id, time_id, coach_id, order_time, dr
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from t_order
+    where order_id = #{orderId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectOrders" resultMap="BaseResultMap" resultType="java.util.List">
+    select
+    <include refid="Base_Column_List" /> from t_order
+    <where>
+      <if test="phone != null">
+        user_id = #{phone,jdbcType=VARCHAR}
+      </if>
+      <if test="coachId != null">
+        coach_id = #{coachId,jdbcType=INTEGER}
+      </if>
+      <if test="timeId != null">
+        time_id = #{timeId,jdbcType=INTEGER}
+      </if>
+    </where>
+    order by order_time desc limit #{star,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectOrdersCount" resultType="java.lang.Integer">
+    select count(0)
+    <where>
+      <if test="phone != null">
+        user_id = #{phone,jdbcType=VARCHAR}
+      </if>
+      <if test="coachId != null">
+        coach_id = #{coachId,jdbcType=INTEGER}
+      </if>
+      <if test="timeId != null">
+        time_id = #{timeId,jdbcType=INTEGER}
+      </if>
+    </where>
+    order by order_time desc;
+  </select>
+
+
+  <select id="queryUserOrdersByUserIdAndDate" resultMap="BaseResultMap" resultType="java.util.List">
+    select <include refid="Base_Column_List" /> from t_order where user_id = #{phone,jdbcType=VARCHAR}
+    and
+    create_time BETWEEN DATE_FORMAT(#{`date`,jdbcType=TIMESTAMP},'%Y-%m-%d') AND DATE_ADD(DATE_FORMAT(#{`date`,jdbcType=TIMESTAMP},'%Y-%m-%d'),INTERVAL 1 DAY)
+  </select>
+
+  <select id="selectByOrdersTimeIdAndDate" resultMap="BaseResultMap" resultType="java.util.List">
+    select <include refid="Base_Column_List" />
+    from t_order
+    where
+    time_id = #{timeId,jdbcType=INTEGER}
+    and
+    create_time BETWEEN DATE_FORMAT(#{`date`,jdbcType=TIMESTAMP},'%Y-%m-%d') AND DATE_ADD(DATE_FORMAT(#{`date`,jdbcType=TIMESTAMP},'%Y-%m-%d'),INTERVAL 1 DAY)
+
+  </select>
+
+
+  <update id="deleteByPrimaryKey">
+    update t_order
+    set dr = 0
+  </update>
+  <insert id="insert" parameterType="com.zhongc.driver.domain.Order" >
+    insert into t_order (order_id, user_id, time_id,
+      coach_id, order_time, dr
+      )
+    values (#{orderId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{timeId,jdbcType=INTEGER},
+      #{coachId,jdbcType=INTEGER}, #{orderTime,jdbcType=TIMESTAMP}, #{dr,jdbcType=BIT}
+      )
+  </insert>
+</mapper>

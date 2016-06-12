@@ -1,0 +1,124 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>driver</title>
+
+    <!-- Set render engine for 360 browser -->
+    <meta name="renderer" content="webkit">
+
+    <!-- No Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="icon" type="image/png" href="$!{resources}/resources/image/favicon.png">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="$!{resources}/resources/image/app-icon72x72@2x.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="apple-touch-icon-precomposed" href="$!{resources}/resources/image/app-icon72x72@2x.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="assets/i/app-icon72x72@2x.png">
+    <meta name="msapplication-TileColor" content="#0e90d2">
+
+    <link rel="stylesheet" href="$!{resources}/resources/css/amazeui.css">
+    <link rel="stylesheet" href="$!{resources}/resources/css/login.css">
+</head>
+<body>
+<!--<div id="userforms" class="am-u-lg-2 am-u-md-centered am-text-center">&nbsp;登录</div>-->
+
+<div class="am-zc-md am-zc-sm  zc-tm" id="loginform">
+    <div class="am-panel am-panel-title am-g">
+        <div class="am-panel-hd"><i class="am-icon-user"></i> 用户账户登录</div>
+        <div class="am-panel-bd">
+            <hr>
+            <form method="post" class="am-form" id="form_user" action="/login">
+                <div id="lform">
+                    <label for="username">账号:</label>
+
+                    <div class="am-input-group  am-input-group-primary">
+                        <span class="am-input-group-label"><i class="am-icon-user am-icon-fw"></i></span>
+                        <input type="text" id="username" name="phone" class="am-form-field" placeholder="账号" required>
+                    </div>
+
+                    <label for="password">密码:</label>
+
+                    <div class="am-input-group am-input-group-warning">
+                        <span class="am-input-group-label"><i class="am-icon-key am-icon-fw"></i></span>
+                        <input type="password" id="password" name="password" class="am-form-field" placeholder="密码"
+                               required>
+                    </div>
+
+##                    <label for="username">验证码:</label>
+##
+##                    <div class="am-input-group  am-input-group-danger">
+##                        <span class="am-input-group-label"><i class="am-icon-square-o am-icon-fw"></i></span>
+##                        <input type="text" id="username" name="phone" class="zc-form-field" placeholder="请输入验证码"
+##                               required>
+##                    </div>
+
+                    <label>
+                        <input type="checkbox" name="save_login">
+                        自动登录
+                    </label>
+                    <br/>
+
+                    <div id="error_msg" style=" color: #c00;">$!{message}</div>
+                    <div id="hint" style="color: #c00;display:none;">正在验证，请您耐心等待...</div>
+                    <div class="am-cf">
+                        <input id="login" type="submit" name="sub" value="登 &nbsp;&nbsp;录"
+                               class="am-btn am-btn-primary am-btn-sm am-fl btn-loading-example"
+                               data-am-loading="{spinner: 'circle-o-notch', loadingText: '加载中...'}">
+
+                        <a href="javascript:void(0);" class="am-btn am-btn-default am-btn-sm am-fr"
+                           data-am-modal="{target: '#my-alert'}"> 忘记密码 ^_^? </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    <div>
+
+        <div class="am-modal am-modal-alert" tabindex="-1" id="my-alert">
+            <div class="am-modal-dialog">
+                <div class="am-modal-active">你好</div>
+                <div class="am-modal-bd">
+                    请联系你的教练重置密码！
+                </div>
+                <div class="am-modal-footer">
+                    <span class="am-modal-btn">确定</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="$!{resources}/resources/js/jquery.min.js"></script>
+<!--<![endif]-->
+<!--[if lte IE 8 ]-->
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<!--[endif]-->
+<script src="$!{resources}/resources/js/amazeui.min.js"></script>
+<script>
+    $("#form_user").submit(
+            function (e) {
+//                $("#hint").attr("style", "display:block");
+                $("#hint").css("display","block");
+                $("#error_msg").attr("style", "display:none");
+            })
+</script>
+</body>
+</html>
