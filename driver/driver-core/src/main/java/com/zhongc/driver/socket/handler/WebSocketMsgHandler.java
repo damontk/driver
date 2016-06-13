@@ -20,12 +20,14 @@ public class WebSocketMsgHandler extends WebSocketHandlerDecorator {
 
     private static Logger logger = LoggerFactory.getLogger(WebSocketMsgHandler.class);
 
+    private static WebSocketMsgHandler webSocketMsgHandler;
     static {
         onLine = new LinkedList<>();
+        webSocketMsgHandler=new WebSocketMsgHandler();
     }
 
-    public WebSocketMsgHandler(WebSocketHandler handler) {
-        super(handler);
+    public WebSocketMsgHandler() {
+        super(webSocketMsgHandler);
     }
 
     @Override

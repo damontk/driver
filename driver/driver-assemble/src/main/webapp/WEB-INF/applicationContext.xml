@@ -22,7 +22,7 @@
         <context:include-filter type="annotation"
                                 expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
     </context:component-scan>
-    <!--<context:component-scan base-package="com.zhongc.driver.socket"/>-->
+    <context:component-scan base-package="com.zhongc.driver.socket"/>
     <!--驱动开启-->
     <mvc:annotation-driven>
         <mvc:message-converters>
