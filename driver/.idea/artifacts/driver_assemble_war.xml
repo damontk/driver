@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="driver-assemble:war">
-    <output-path>$PROJECT_DIR$/driver-assemble/target</output-path>
-    <root id="archive" name="ROOT.war">
-      <element id="artifact" artifact-name="driver-assemble:war exploded" />
-    </root>
-  </artifact>
-</component>
