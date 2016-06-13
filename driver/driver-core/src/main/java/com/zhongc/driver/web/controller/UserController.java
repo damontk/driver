@@ -4,7 +4,6 @@ import com.zhongc.driver.common.Constant;
 import com.zhongc.driver.common.util.ip.IPUtil;
 import com.zhongc.driver.domain.User;
 import com.zhongc.driver.domain.order.user.LoginOrder;
-import com.zhongc.driver.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
