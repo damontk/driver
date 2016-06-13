@@ -29,8 +29,8 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/webSocketServer").addInterceptors(new WebSocketSessionCapturingHandlerDecorator());
-        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/sockjs/webSocketServer").addInterceptors(new WebSocketSessionCapturingHandlerDecorator()).withSockJS();
+        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor());
+        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/sockjs/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor()).withSockJS();
     }
     @Bean
     public WebSocketMsgHandler getWebSocketMsgHandler(){
