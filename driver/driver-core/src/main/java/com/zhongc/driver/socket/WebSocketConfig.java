@@ -2,16 +2,12 @@ package com.zhongc.driver.socket;
 
 import com.zhongc.driver.socket.handler.WebSocketMsgHandler;
 import com.zhongc.driver.web.interceptors.HttpSessionIdHandshakeInterceptor;
-import com.zhongc.driver.web.interceptors.SessionKeepAliveChannelInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.ChannelRegistration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.*;
-import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 /**
  * @Filename WebsocketConfig.java
