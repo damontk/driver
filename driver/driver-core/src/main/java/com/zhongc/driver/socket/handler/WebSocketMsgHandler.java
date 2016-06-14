@@ -1,11 +1,12 @@
 package com.zhongc.driver.socket.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.zhongc.driver.common.Constant;
 import com.zhongc.driver.common.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.*;
-import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
+import org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator;
 
 import java.io.IOException;
 import java.util.Date;
@@ -15,50 +16,61 @@ import java.util.List;
 /**
  * Created by zhongChao on 2016/1/26.
  */
-public class WebSocketMsgHandler extends WebSocketHandlerDecorator {
-    private static List<WebSocketSession> onLine;
+public class WebSocketMsgHandler extends ExceptionWebSocketHandlerDecorator {
+    private static List<WebSocketSession> onLineList;
 
     private static Logger logger = LoggerFactory.getLogger(WebSocketMsgHandler.class);
 
-    private static WebSocketMsgHandler webSocketMsgHandler;
     static {
-        onLine = new LinkedList<>();
-        webSocketMsgHandler=new WebSocketMsgHandler();
+        onLineList = new LinkedList<>();
+    }
+    public WebSocketMsgHandler() {
+        super(null);
     }
 
-    public WebSocketMsgHandler() {
-        super(webSocketMsgHandler);
-    }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         System.out.print("afterConnectionEstablished() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
         // 获取用户名称
         String userName = (String) session.getAttributes().get(Constant.Session.SESSION_USER_NAME);
 
         if (userName != null) {
-
         }
-        super.afterConnectionEstablished(session);
+        onLineList.add(session);
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) {
         System.out.print("handleMessage() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
-        session.sendMessage(message);
-        super.handleMessage(session, message);
+        JSON.parseObject(message.getPayload() + "", User.class);
+        TextMessage tm = new TextMessage(message.getPayload() + "");
+//        session.sendMessage(tm);
+        senMsgToAllOnline(tm);
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
         System.out.print("handleTransportError() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
-        super.handleTransportError(session, exception);
+        if (session.isOpen()) {
+            try {
+                session.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        onLineList.remove(session);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         System.out.print("afterConnectionClosed() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
-        super.afterConnectionClosed(session, closeStatus);
+        onLineList.remove(session);
+    }
+
+    @Override
+    public boolean supportsPartialMessages() {
+        return false;
     }
 
     /**
@@ -68,7 +80,7 @@ public class WebSocketMsgHandler extends WebSocketHandlerDecorator {
      * @param message  信息
      */
     public void sendMsgToUser(String userName, TextMessage message) {
-        for (WebSocketSession user : onLine) {
+        for (WebSocketSession user : onLineList) {
             if (user.getAttributes().get(userName) != null) {
                 sendMsg(userName, message, user);
             }
@@ -82,7 +94,7 @@ public class WebSocketMsgHandler extends WebSocketHandlerDecorator {
      * @param message
      */
     public void senMsgToAssignUsers(List<String> userNames, TextMessage message) {
-        for (WebSocketSession user : onLine) {
+        for (WebSocketSession user : onLineList) {
             for (String userName : userNames) {
                 if (user.getAttributes().get(userName) != null) {
                     sendMsg(userName, message, user);
@@ -98,7 +110,7 @@ public class WebSocketMsgHandler extends WebSocketHandlerDecorator {
      * @param message
      */
     public void senMsgToAllOnline(TextMessage message) {
-        for (WebSocketSession user : onLine) {
+        for (WebSocketSession user : onLineList) {
             sendMsg((String) user.getAttributes().get(Constant.Session.SESSION_USER_NAME), message, user);
         }
     }
@@ -113,5 +125,35 @@ public class WebSocketMsgHandler extends WebSocketHandlerDecorator {
         } catch (IOException e) {
             logger.error("发送给" + userName + "信息出错！" + e);
         }
+    }
+}
+
+class User {
+    private String userid;
+    private String username;
+    private String content;
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

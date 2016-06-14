@@ -1,13 +1,14 @@
 package com.zhongc.driver.socket;
 
 import com.zhongc.driver.socket.handler.WebSocketMsgHandler;
-import com.zhongc.driver.web.interceptors.HttpSessionIdHandshakeInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 /**
  * @Filename WebsocketConfig.java
@@ -29,7 +30,7 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
         webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/sockjs/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor()).withSockJS();
     }
     @Bean
-    public WebSocketMsgHandler getWebSocketMsgHandler(){
+    public WebSocketHandler getWebSocketMsgHandler(){
         return new WebSocketMsgHandler();
     }
 }
