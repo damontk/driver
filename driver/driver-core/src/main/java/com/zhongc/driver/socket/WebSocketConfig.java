@@ -8,12 +8,11 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 /**
  * @Filename WebsocketConfig.java
  * @Description
- * @Version 1.0
+ * @Version 1.0  http://www.jianshu.com/p/8500ad65eb50
  * @Author zhongc
  * @Email zhong_ch@foxmail.com
  * @History <li>Author: zhongc</li>
