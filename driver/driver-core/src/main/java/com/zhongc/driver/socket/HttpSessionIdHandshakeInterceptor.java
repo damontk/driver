@@ -1,4 +1,4 @@
-package com.zhongc.driver.web.interceptors;
+package com.zhongc.driver.socket;
 
 import com.zhongc.driver.common.Constant;
 import org.slf4j.Logger;
@@ -8,11 +8,13 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import javax.servlet.http.HttpSession;
+import java.io.BufferedInputStream;
 import java.util.Map;
 
-public class HttpSessionIdHandshakeInterceptor implements HandshakeInterceptor {
+public class HttpSessionIdHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpSessionIdHandshakeInterceptor.class);
 
