@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by zhongChao on 2016/1/26.
  */
-public class WebSocketMsgHandler extends ExceptionWebSocketHandlerDecorator {
+public class WebSocketMsgHandler implements WebSocketHandler {
     private static List<WebSocketSession> onLineList;
 
     private static Logger logger = LoggerFactory.getLogger(WebSocketMsgHandler.class);
@@ -25,12 +25,11 @@ public class WebSocketMsgHandler extends ExceptionWebSocketHandlerDecorator {
         onLineList = new LinkedList<>();
     }
     public WebSocketMsgHandler() {
-        super(null);
     }
 
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.print("afterConnectionEstablished() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
         // 获取用户名称
         String userName = (String) session.getAttributes().get(Constant.Session.SESSION_USER_NAME);
@@ -41,7 +40,7 @@ public class WebSocketMsgHandler extends ExceptionWebSocketHandlerDecorator {
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) {
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         System.out.print("handleMessage() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
         JSON.parseObject(message.getPayload() + "", User.class);
         TextMessage tm = new TextMessage(message.getPayload() + "");
@@ -50,7 +49,7 @@ public class WebSocketMsgHandler extends ExceptionWebSocketHandlerDecorator {
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) {
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         System.out.print("handleTransportError() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
         if (session.isOpen()) {
             try {
@@ -63,7 +62,7 @@ public class WebSocketMsgHandler extends ExceptionWebSocketHandlerDecorator {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
         System.out.print("afterConnectionClosed() 运行时间:" + DateUtil.format(DateUtil.dtSimpleHMS, new Date()));
         onLineList.remove(session);
     }

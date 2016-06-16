@@ -187,6 +187,7 @@
         var ws = null;
         var url = null;
         var transports = [];
+        var stompClient =null;
 
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;

@@ -3,11 +3,13 @@ package com.zhongc.driver.socket;
 import com.zhongc.driver.socket.handler.WebSocketMsgHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 /**
  * @Filename WebsocketConfig.java
@@ -22,14 +24,36 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
  */
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
+@EnableWebSocketMessageBroker
+@EnableScheduling
+public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer{
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
+//        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor());
+//        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/sockjs/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor()).withSockJS();
+//    }
+
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor());
-        webSocketHandlerRegistry.addHandler(getWebSocketMsgHandler(), "/sockjs/webSocketServer").addInterceptors(new HttpSessionIdHandshakeInterceptor()).withSockJS();
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/socket").withSockJS().setInterceptors(new HttpSessionIdHandshakeInterceptor());
     }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableSimpleBroker("/topic");
+        registry.setApplicationDestinationPrefixes("/app");
+    }
+
+//    @Bean
+//    public WebSocketHandler getWebSocketMsgHandler(){
+//        return new WebSocketMsgHandler();
+//    }
+
     @Bean
-    public WebSocketHandler getWebSocketMsgHandler(){
-        return new WebSocketMsgHandler();
+    public ServletServerContainerFactoryBean createWebSocketContainer() {
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        container.setMaxTextMessageBufferSize(8192);
+        container.setMaxBinaryMessageBufferSize(8192);
+        return container;
     }
 }

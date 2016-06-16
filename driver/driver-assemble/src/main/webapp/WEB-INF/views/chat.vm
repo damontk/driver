@@ -4,19 +4,30 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="$!{resources}/resources/css/driver/chat.css">
+    <script type="text/javascript" src="$!{resources}/resources/js/jquery.min.js"></script>
+    <script type="text/javascript" src="$!{resources}/resources/js/sockjs-0.3.4.js"></script>
+    <script type="text/javascript" src="$!{resources}/resources/js/stomp.js"></script>
+    <script type="text/javascript" src="$!{resources}/resources/js/chat/chat.js?id=1"></script>
+    <script type="text/javascript">
+        var stompClient = null;
+        function connection(obj) {
+            var ws = new SockJS("/socket");
+            stompClient = Stomp.over(ws);
+            CHAT.connect(stompClient);
+        }
+        function sendMessage() {
+            CHAT.sendMsg(stompClient, $('#msg'));
+        }
+    </script>
 </head>
-##<script>
-##    $(function () {
-##        app.connect();
-##    })
-##</script>
 <body>
+<button type="button" id="connect" onclick="connection(this)">connection</button>
 <div class="content" style="height: 600px;">
     <div class="chatContent">
-        <div class="chatRecord">
+        <div class="chatRecord" id="chatMsgs">
         </div>
         <div class="chatInput">
-            <input class="input" type="text" value="" placeholder="请输入内容">
+            <input class="input" id="msg" type="text" value="" placeholder="请输入内容">
             <input class="chatSend" type="button" onclick="sendMessage()" value="发送">
         </div>
     </div>
@@ -26,8 +37,4 @@
 
 </div>
 </body>
-<script type="text/javascript" src="$!{resources}/resources/js/jquery.min.js"></script>
-<script type="text/javascript" src="$!{resources}/resources/js/sockjs-0.3.4.js"></script>
-<script type="text/javascript" src="$!{resources}/resources/js/stomp.js"></script>
-<script type="text/javascript" src="$!{resources}/resources/js/chat/chat.js?id=1"></script>
 </html>
