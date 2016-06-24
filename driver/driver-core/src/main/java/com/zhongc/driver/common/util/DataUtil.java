@@ -22,7 +22,6 @@ public class DataUtil {
     public static boolean isAjax(HttpServletRequest request) {
         boolean ajax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         String ajaxFlag = null == request.getParameter("ajax") ? "false" : request.getParameter("ajax");
-        boolean isAjax = ajax || ajaxFlag.equalsIgnoreCase("true");
-        return isAjax;
+        return ajax || ajaxFlag.equalsIgnoreCase("true");
     }
 }

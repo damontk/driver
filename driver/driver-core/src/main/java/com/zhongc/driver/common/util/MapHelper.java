@@ -14,73 +14,76 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapHelper {
-	private static final Logger logger = LoggerFactory.getLogger(MapHelper.class);
-	/**
-	 * 将 Bean 转化为Map
-	 *
-	 * @param obj Bean
-	 * @return Map
-	 * @throws IntrospectionException
-	 */
-	public static Map<String, Object> putBeansToMap(Object obj){
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			BeanInfo bean = Introspector.getBeanInfo(obj.getClass());
-			PropertyDescriptor[] pro = bean.getPropertyDescriptors();
-			for (PropertyDescriptor proBean : pro) {
+    private static final Logger logger = LoggerFactory.getLogger(MapHelper.class);
 
-				String key = proBean.getName();
-				if (!key.equals("class")) {
-					Method getMet = proBean.getReadMethod();
-					Object value;
-					try {
-						value = getMet.invoke(obj);
-						if (value==null){
-							continue;
-						}
-						map.put(key, value);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
+    /**
+     * 将 Bean 转化为Map
+     *
+     * @param obj Bean
+     * @return Map
+     * @throws IntrospectionException
+     */
+    public static Map<String, Object> putBeansToMap(Object obj) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            BeanInfo bean = Introspector.getBeanInfo(obj.getClass());
+            PropertyDescriptor[] pro = bean.getPropertyDescriptors();
+            for (PropertyDescriptor proBean : pro) {
 
-					} catch (IllegalArgumentException e) {
+                String key = proBean.getName();
+                if (!key.equals("class")) {
+                    Method getMet = proBean.getReadMethod();
+                    Object value;
+                    try {
+                        value = getMet.invoke(obj);
+                        if (value == null) {
+                            continue;
+                        }
+                        map.put(key, value);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
 
-						e.printStackTrace();
+                    } catch (IllegalArgumentException e) {
 
-					} catch (InvocationTargetException e) {
+                        e.printStackTrace();
 
-						e.printStackTrace();
-					}
-				}
+                    } catch (InvocationTargetException e) {
 
-			}
-		}catch(IntrospectionException exception){
-			exception.printStackTrace();
-		}
+                        e.printStackTrace();
+                    }
+                }
 
-		return map;
-	}
-	/**
-	 * 将Map转换为Bean
-	 * @param map 有参数的Map
-	 * @param obj Bean
-	 */
-	public static void putMapToBeans(Map<String, Object> map, Object obj) {
-		if (map.size() <= 0 || map == null) {
+            }
+        } catch (IntrospectionException exception) {
+            exception.printStackTrace();
+        }
 
-			throw new RuntimeException("Map 不能为空");
+        return map;
+    }
 
-		}
-		try {
+    /**
+     * 将Map转换为Bean
+     *
+     * @param map 有参数的Map
+     * @param obj Bean
+     */
+    public static void putMapToBeans(Map<String, Object> map, Object obj) {
+        if (map == null || map.size() <= 0) {
 
-			BeanUtils.copyProperties(obj, map);
+            throw new RuntimeException("Map 不能为空");
 
-		} catch (IllegalAccessException e) {
+        }
+        try {
 
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+            BeanUtils.copyProperties(obj, map);
 
-			e.printStackTrace();
-		}
-	}
+        } catch (IllegalAccessException e) {
+
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+
+            e.printStackTrace();
+        }
+    }
 
 }

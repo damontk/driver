@@ -3,9 +3,13 @@ package com.zhongc.driver.socket;
 import com.zhongc.driver.common.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.messaging.simp.user.DefaultUserSessionRegistry;
+import org.springframework.messaging.simp.user.UserSessionRegistry;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
@@ -28,10 +32,16 @@ public class HttpSessionIdHandshakeInterceptor extends HttpSessionHandshakeInter
                 attributes.put(Constant.Session.SESSION_ID, session.getId());
             }
         }
+//        userSessionRegistry.
         return true;
     }
 
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                WebSocketHandler wsHandler, Exception ex) {
+    }
+
+    @Bean
+    public UserSessionRegistry userSessionRegistry() {
+        return new DefaultUserSessionRegistry();
     }
 }
